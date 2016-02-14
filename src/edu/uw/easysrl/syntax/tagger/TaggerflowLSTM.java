@@ -30,6 +30,7 @@ public class TaggerflowLSTM extends Tagger {
 	private static Taggerflow makeTaggerflow(final File modelFolder) {
 		// Apparently this is the easiest way to set the library path in code...
 		System.setProperty("java.library.path", "lib");
+
 		Field fieldSysPath;
 		try {
 			fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");

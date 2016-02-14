@@ -46,7 +46,7 @@ public abstract class Category implements Serializable, Comparable<Category> {
 	public static final Category ADJECTIVE = valueOf("N/N");
 	public static final Category DETERMINER = Category.valueOf("NP[nb]/N");
 
-	private Category(final String asString) {
+	protected Category(final String asString) {
 		this.asString = asString;
 		this.id = numCats.getAndIncrement();
 	}

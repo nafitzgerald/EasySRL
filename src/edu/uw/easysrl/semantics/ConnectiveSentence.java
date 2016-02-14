@@ -51,7 +51,7 @@ public class ConnectiveSentence extends Sentence {
 		}
 	}
 
-	private static Sentence make(final Connective connective, final List<Sentence> children2) {
+	public static Sentence make(final Connective connective, final List<Sentence> children2) {
 		// Allow trailing nulls, for convenience
 		final List<Sentence> children = new ArrayList<>();
 		for (final Sentence child : children2) {

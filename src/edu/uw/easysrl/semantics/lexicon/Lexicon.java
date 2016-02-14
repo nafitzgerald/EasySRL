@@ -47,7 +47,7 @@ public abstract class Lexicon {
 	 * Gets a lemma for a phrase. Multiword phrases are collapsed into a single token. If a parse is provided, it will
 	 * collapse verb-particle constructions.
 	 */
-	String getLemma(final String word, final String pos, final Optional<CCGandSRLparse> parse, final int wordIndex) {
+	protected String getLemma(final String word, final String pos, final Optional<CCGandSRLparse> parse, final int wordIndex) {
 		String lemma = word == null ? null : MorphaStemmer.stemToken(word.toLowerCase().replaceAll(" ", "_"), pos);
 		if (parse.isPresent()) {
 			final List<ResolvedDependency> deps = parse.get().getOrderedDependenciesAtPredicateIndex(wordIndex);
@@ -64,7 +64,7 @@ public abstract class Lexicon {
 	}
 
 	/** Functions into e.g. (NP\NP)|$ */
-	static boolean isFunctionIntoEntityModifier(final Category category) {
+	public static boolean isFunctionIntoEntityModifier(final Category category) {
 		return category.getNumberOfArguments() > 0
 				&& (category.getArgument(0).equals(Category.PP) || category.getArgument(0).equals(Category.NP))
 				&& (category.getArgument(1).equals(Category.NP) || category.getArgument(1).equals(Category.PP));

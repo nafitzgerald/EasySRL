@@ -12,14 +12,14 @@ import edu.uw.easysrl.semantics.Variable.VariableNames;
 public class SkolemTerm extends Logic {
 	private static final long serialVersionUID = 1L;
 
-	private final String quantifier;
+	public final String quantifier;
 	private final LambdaExpression property;
 
 	public SkolemTerm(final LambdaExpression property) {
 		this(null, property);
 	}
 
-	private SkolemTerm(final String quantifier, final LambdaExpression property) {
+	public SkolemTerm(final String quantifier, final LambdaExpression property) {
 		super();
 		this.quantifier = quantifier;
 		this.property = property;

@@ -18,7 +18,7 @@ public class CompositeLexicon extends Lexicon {
 
 	private final List<Lexicon> lexica;
 
-	private CompositeLexicon(final List<Lexicon> lexica) {
+	public CompositeLexicon(final List<Lexicon> lexica) {
 		this.lexica = ImmutableList.copyOf(lexica);
 	}
 

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.uw.easysrl.dependencies.Coindexation;
+import edu.uw.easysrl.dependencies.Coindexation.IDorHead;
 import edu.uw.easysrl.semantics.SemanticType;
 import edu.uw.easysrl.semantics.Variable;
 import edu.uw.easysrl.syntax.grammar.Category;
@@ -14,10 +15,10 @@ import edu.uw.easysrl.syntax.grammar.Category;
  * Given a category and coindexation, builds variables corresponding to the head and each argument of the category
  *
  */
-class HeadAndArguments {
-	final Map<Coindexation.IDorHead, Variable> coindexationIDtoVariable;
-	final List<Variable> argumentVariables;
-	final Variable headVariable;
+public class HeadAndArguments {
+	public final Map<Coindexation.IDorHead, Variable> coindexationIDtoVariable;
+	public final List<Variable> argumentVariables;
+	public final Variable headVariable;
 
 	HeadAndArguments(final Category category, final Coindexation coindexation) {
 
@@ -39,6 +40,13 @@ class HeadAndArguments {
 		headVariable = getHead(category, argumentVariables);
 		coindexationIDtoVariable.put(tmp.getID(), headVariable);
 
+	}
+
+	public HeadAndArguments(Map<IDorHead, Variable> coindexationIDtoVariable,
+			List<Variable> argumentVariables, Variable headVariable) {
+		this.coindexationIDtoVariable = coindexationIDtoVariable;
+		this.argumentVariables = argumentVariables;
+		this.headVariable = headVariable;
 	}
 
 	private Variable getHead(final Category category, final List<Variable> vars) {

@@ -28,6 +28,10 @@ public class DenseLexicalFeature extends LexicalCategoryFeature {
 
 	}
 
+	public DenseLexicalFeature(Tagger goldTagger) {
+		this.tagger = goldTagger;
+	}
+
 	/**
 	 * Normalizes words by lower-casing and replacing numbers with '#'/
 	 */

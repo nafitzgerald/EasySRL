@@ -255,9 +255,12 @@ public class Coindexation implements Serializable {
 	}
 
 	static Coindexation fromString(final Category category2, final int wordIndex) {
-		String category = categoryToMarkedUpCategory.get(category2);
+		String catStr = category2.toString().replace("[o]", "").replace("[p]", "");
+		Category cat = Category.valueOf(catStr);
+		
+		String category = categoryToMarkedUpCategory.get(cat);
 		if (category == null) {
-			category = category2.toString();
+			category = cat.toString();
 		}
 		return fromString(category, new Coindexation.IDorHead(Collections.singletonList(wordIndex)), new HashMap<>(),
 				wordIndex, true);

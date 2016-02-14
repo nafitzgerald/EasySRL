@@ -32,11 +32,20 @@ public abstract class InputReader {
 
 	public static class InputWord implements Serializable {
 		private static final long serialVersionUID = -4110997736066926795L;
+		
+		public Category category;
 
 		public InputWord(final String word, final String pos, final String ner) {
 			this.word = word;
 			this.pos = pos;
 			this.ner = ner;
+		}
+		
+		public InputWord(final String word, final String pos, final String ner, final Category category) {
+			this.word = word;
+			this.pos = pos;
+			this.ner = ner;
+			this.category = category;
 		}
 
 		InputWord(final String word) {
@@ -257,7 +266,7 @@ public abstract class InputReader {
 				final String word = goldFields[0];
 				final String pos = goldFields[1];
 				final Category category = Category.valueOf(goldFields[2]);
-				words.add(new InputWord(word, pos, null));
+				words.add(new InputWord(word, pos, null, category));
 				result.add(category);
 				supertags.add(Collections.singletonList(new ScoredCategory(category, Double.MAX_VALUE)));
 			}

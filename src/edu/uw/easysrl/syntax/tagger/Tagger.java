@@ -24,6 +24,7 @@ import edu.uw.easysrl.corpora.ParallelCorpusReader;
 import edu.uw.easysrl.main.InputReader.InputWord;
 import edu.uw.easysrl.syntax.grammar.Category;
 import edu.uw.easysrl.syntax.model.CutoffsDictionaryInterface;
+import edu.uw.easysrl.syntax.tagger.TaggerLSTM;
 import edu.uw.easysrl.util.Util;
 
 public abstract class Tagger {
@@ -82,6 +83,7 @@ public abstract class Tagger {
 			return new TaggerflowLSTM(folder, beam, maxTagsPerWord, cutoffs);
 		}
 		else if (new File(folder, "lstm").exists()) {
+			System.out.println("LSTM");
 			return new TaggerLSTM(folder, beam, maxTagsPerWord, cutoffs);
 		} else {
 			return new TaggerEmbeddings(folder, beam, maxTagsPerWord, cutoffs);

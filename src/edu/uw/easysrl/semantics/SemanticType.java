@@ -27,11 +27,11 @@ public abstract class SemanticType implements Serializable {
 	public static final SemanticType EventToT = make(Ev, T);
 	private final static Map<Category, SemanticType> categoryToTypeCache = new HashMap<>();
 
-	static class AtomicSemanticType extends SemanticType {
+	public static class AtomicSemanticType extends SemanticType {
 		private static final long serialVersionUID = 1L;
 		private final String type;
 
-		private AtomicSemanticType(final String type) {
+		public AtomicSemanticType(final String type) {
 			super();
 			this.type = type;
 		}
@@ -73,7 +73,7 @@ public abstract class SemanticType implements Serializable {
 		}
 	}
 
-	static class ComplexSemanticType extends SemanticType {
+	public static class ComplexSemanticType extends SemanticType {
 		private static final long serialVersionUID = 1L;
 		private final SemanticType from;
 		private final SemanticType to;

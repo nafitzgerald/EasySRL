@@ -302,6 +302,7 @@ public abstract class Category implements Serializable, Comparable<Category> {
 		}
 
 		@Override
+		public
 		String getType() {
 			throw new UnsupportedOperationException();
 		}
@@ -488,6 +489,7 @@ public abstract class Category implements Serializable, Comparable<Category> {
 		}
 
 		@Override
+		public
 		String getType() {
 			return type;
 		}
@@ -592,9 +594,9 @@ public abstract class Category implements Serializable, Comparable<Category> {
 		return valueOf(left.toStringWithBrackets() + op + right.toStringWithBrackets());
 	}
 
-	abstract String getType();
+	public abstract String getType();
 
-	abstract boolean isFunctor();
+	public abstract boolean isFunctor();
 
 	public abstract boolean isPunctuation();
 

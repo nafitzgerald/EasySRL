@@ -55,6 +55,10 @@ public class DefaultLexicon extends Lexicon {
 	public Logic getEntry(final String word, final String pos, final Category category, final Coindexation coindexation,
 			final Optional<CCGandSRLparse> parse, final int wordIndex) {
 		final String lemma = getLemma(word, pos, parse, wordIndex);
+		
+		if (word != null && word.equals("in") && category != null && category.toString().equals("(N\\N)/NP")) {
+			System.out.println("");
+		}
 
 		if (Category.valueOf("conj|conj").matches(category)) {
 			// Special case, since we have other rules to deal with this non-compositionally.

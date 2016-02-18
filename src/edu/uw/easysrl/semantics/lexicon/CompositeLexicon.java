@@ -37,6 +37,7 @@ public class CompositeLexicon extends Lexicon {
 	@Override
 	public Logic getEntry(final String word, final String pos, final Category category, final Coindexation coindexation,
 			final Optional<CCGandSRLparse> parse, final int wordIndex) {
+		
 		Logic result = null;
 		for (final Lexicon lexicon : lexica) {
 			result = lexicon.getEntry(word, pos, category, coindexation, parse, wordIndex);

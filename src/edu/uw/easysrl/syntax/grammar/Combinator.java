@@ -53,7 +53,7 @@ public abstract class Combinator {
 	// TODO Can we get rid of RuleType altogether?
 	private final static Map<RuleType, Combinator> typeToCombinator = new HashMap<>();
 
-	private Combinator(final RuleType ruleType) {
+	protected Combinator(final RuleType ruleType) {
 		this.ruleType = ruleType;
 		typeToCombinator.put(ruleType, this);
 	}

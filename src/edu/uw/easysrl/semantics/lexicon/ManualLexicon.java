@@ -109,7 +109,7 @@ public class ManualLexicon extends Lexicon {
 				}
 			}
 		}
-
+		
 		return result;
 	}
 

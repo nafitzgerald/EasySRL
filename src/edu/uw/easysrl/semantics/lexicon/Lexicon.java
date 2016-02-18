@@ -27,10 +27,12 @@ public abstract class Lexicon {
 	 */
 	public Logic getEntry(final CCGandSRLparse parse, final int wordIndex) {
 		final SyntaxTreeNodeLeaf leaf = parse.getLeaf(wordIndex);
+		String catStr = leaf.getCategory().toString().replace("[p]", "").replace("[o]", "");
+		Category leafCat = Category.valueOf(catStr);
 		return getEntry(leaf.getWord(), leaf.getPos(), leaf.getCategory(),
 				// The parser may or may not have recorded what the co-indexation for word is, so re-building it here
 				// anyway.
-				DependencyStructure.make(leaf.getCategory(), leaf.getWord(), wordIndex).getCoindexation(),
+				DependencyStructure.make(leafCat, leaf.getWord(), wordIndex).getCoindexation(),
 				Optional.of(parse), wordIndex);
 
 	}

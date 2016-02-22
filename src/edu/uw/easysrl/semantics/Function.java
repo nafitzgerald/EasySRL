@@ -53,7 +53,7 @@ public class Function extends Logic {
 		}
 	}
 
-	private Function(final Logic predicate, final List<? extends Logic> children) {
+	public Function(final Logic predicate, final List<? extends Logic> children) {
 
 		this.function = predicate;
 		this.children = ImmutableList.copyOf(children);

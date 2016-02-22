@@ -22,7 +22,7 @@ public class LambdaExpression extends Logic {
 		this(statement, Arrays.asList(vars));
 	}
 
-	private LambdaExpression(final Logic statement, final List<Variable> vars) {
+	public LambdaExpression(final Logic statement, final List<Variable> vars) {
 		super();
 		Preconditions.checkArgument(statement != null);
 		for (final Variable v : vars) {

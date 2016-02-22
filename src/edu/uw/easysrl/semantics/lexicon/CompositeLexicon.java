@@ -51,6 +51,13 @@ public class CompositeLexicon extends Lexicon {
 
 	@Override
 	public boolean isMultiWordExpression(final SyntaxTreeNode node) {
-		return lexica.stream().anyMatch(x -> x.isMultiWordExpression(node));
+		for (Lexicon lexicon : lexica)	{
+			if (lexicon.isMultiWordExpression(node)) {
+				return true;
+			}
+		}
+		return false;
+		
+		//return lexica.stream().anyMatch(x -> x.isMultiWordExpression(node));
 	}
 }

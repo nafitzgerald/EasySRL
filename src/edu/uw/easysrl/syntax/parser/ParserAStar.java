@@ -6,11 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
+
 import edu.uw.easysrl.dependencies.DependencyStructure;
 import edu.uw.easysrl.dependencies.UnlabelledDependency;
 import edu.uw.easysrl.main.InputReader.InputToParser;
 import edu.uw.easysrl.main.InputReader.InputWord;
 import edu.uw.easysrl.syntax.grammar.Category;
+import edu.uw.easysrl.syntax.grammar.Combinator;
 import edu.uw.easysrl.syntax.grammar.Combinator.RuleProduction;
 import edu.uw.easysrl.syntax.grammar.Combinator.RuleType;
 import edu.uw.easysrl.syntax.grammar.NormalForm;
@@ -20,6 +24,7 @@ import edu.uw.easysrl.syntax.grammar.SyntaxTreeNode.SyntaxTreeNodeUnary;
 import edu.uw.easysrl.syntax.model.AgendaItem;
 import edu.uw.easysrl.syntax.model.Model;
 import edu.uw.easysrl.syntax.model.Model.ModelFactory;
+import edu.uw.easysrl.syntax.parser.AbstractParser.UnaryRule;
 import edu.uw.easysrl.syntax.parser.ChartCell.Cell1Best;
 import edu.uw.easysrl.syntax.parser.ChartCell.Cell1BestTreeBased;
 import edu.uw.easysrl.syntax.parser.ChartCell.ChartCellFactory;
@@ -40,6 +45,20 @@ public class ParserAStar extends AbstractParser {
 			throws IOException {
 		super(TaggerEmbeddings.loadCategories(new File(modelFolder, "categories")), maxSentenceLength, nbest,
 				validRootCategories, modelFolder);
+		this.modelFactory = modelFactory;
+		this.maxChartSize = maxChartSize;
+		this.usingDependencies = modelFactory.isUsingDependencies();
+		this.cellFactory = nbest > 1 ? new ChartCellNbestFactory(nbest, nbestBeam, maxSentenceLength,
+				super.lexicalCategories) : modelFactory.isUsingDependencies() ? Cell1Best.factory()
+						: Cell1BestTreeBased.factory();
+	}
+
+	public ParserAStar(final ModelFactory modelFactory, final int maxSentenceLength, final int nbest,
+			final List<Category> validRootCategories, final File modelFolder, final int maxChartSize,
+			Multimap<Category, UnaryRule> unaryRules,
+			List<Combinator> extraCombinators) throws IOException {
+		super(TaggerEmbeddings.loadCategories(new File(modelFolder, "categories")), maxSentenceLength, nbest,
+				validRootCategories, modelFolder, unaryRules, extraCombinators);
 		this.modelFactory = modelFactory;
 		this.maxChartSize = maxChartSize;
 		this.usingDependencies = modelFactory.isUsingDependencies();

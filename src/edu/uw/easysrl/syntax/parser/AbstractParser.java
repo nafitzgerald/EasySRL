@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,33 +39,69 @@ public abstract class AbstractParser implements Parser {
 
 	final Collection<Category> lexicalCategories;
 
-	public AbstractParser(final Collection<Category> lexicalCategories, final int maxSentenceLength, final int nbest,
-			final List<Category> validRootCategories, final File modelFolder) throws IOException {
-		this(lexicalCategories, maxSentenceLength, nbest, validRootCategories, new File(modelFolder, "unaryRules"),
-				new File(modelFolder, "binaryRules"), new File(modelFolder, "markedup"), new File(modelFolder,
+	public AbstractParser(final Collection<Category> lexicalCategories,
+			final int maxSentenceLength, final int nbest,
+			final List<Category> validRootCategories, final File modelFolder,
+			Multimap<Category, UnaryRule> unaryRules,
+			Collection<Combinator> extraCombinators) throws IOException {
+		this(lexicalCategories, maxSentenceLength, nbest, validRootCategories,
+				new File(modelFolder, "unaryRules"), unaryRules, new File(modelFolder,
+						"binaryRules"), extraCombinators,
+				new File(modelFolder, "markedup"), new File(modelFolder,
 						"seenRules"));
 	}
 
-	private AbstractParser(final Collection<Category> lexicalCategories, final int maxSentenceLength, final int nbest,
-			final List<Category> validRootCategories, final File unaryRulesFile, final File extraCombinatorsFile,
-			final File markedupFile, final File seenRulesFile) throws IOException {
+	public AbstractParser(final Collection<Category> lexicalCategories,
+			final int maxSentenceLength, final int nbest,
+			final List<Category> validRootCategories, final File modelFolder)
+			throws IOException {
+		this(lexicalCategories, maxSentenceLength, nbest, validRootCategories,
+				new File(modelFolder, "unaryRules"), new File(modelFolder,
+						"binaryRules"), new File(modelFolder, "markedup"),
+				new File(modelFolder, "seenRules"));
+	}
+
+	private AbstractParser(final Collection<Category> lexicalCategories,
+			final int maxSentenceLength, final int nbest,
+			final List<Category> validRootCategories,
+			final File unaryRulesFile, final File extraCombinatorsFile,
+			final File markedupFile, final File seenRulesFile)
+			throws IOException {
+		this(lexicalCategories, maxSentenceLength, nbest, validRootCategories,
+				unaryRulesFile, null, extraCombinatorsFile, null, markedupFile, seenRulesFile);
+	}
+
+	private AbstractParser(final Collection<Category> lexicalCategories,
+			final int maxSentenceLength, final int nbest,
+			final List<Category> validRootCategories,
+			final File unaryRulesFile,
+			Multimap<Category, UnaryRule> extraUnaryRules,
+			final File extraCombinatorsFile,
+			Collection<Combinator> extraCombinators, final File markedupFile,
+			final File seenRulesFile) throws IOException {
 		this.maxLength = maxSentenceLength;
 		this.nbest = nbest;
-		this.unaryRules = loadUnaryRules(unaryRulesFile);
+		this.unaryRules = loadUnaryRules(unaryRulesFile, extraUnaryRules);
 		this.seenRules = new SeenRules(seenRulesFile, lexicalCategories);
 		this.lexicalCategories = lexicalCategories;
 		Coindexation.parseMarkedUpFile(markedupFile);
 
-		final List<Combinator> combinators = new ArrayList<>(Combinator.STANDARD_COMBINATORS);
-
-		if (extraCombinatorsFile != null && extraCombinatorsFile.exists()) {
-			combinators.addAll(Combinator.loadSpecialCombinators(extraCombinatorsFile));
+		final List<Combinator> combinators = new ArrayList<>(
+				Combinator.STANDARD_COMBINATORS);
+		if (extraCombinatorsFile != null
+						&& extraCombinatorsFile.exists()) {
+			combinators.addAll(Combinator
+						.loadSpecialCombinators(extraCombinatorsFile));
+		}
+		if (extraCombinators != null) {
+			combinators.addAll(extraCombinators);
 		}
 		this.binaryRules = ImmutableList.copyOf(combinators);
 
 		possibleRootCategories = ImmutableSet.copyOf(validRootCategories);
 
-		for (final Cell<Category, Category, List<RuleProduction>> entry : seenRules.ruleTable().cellSet()) {
+		for (final Cell<Category, Category, List<RuleProduction>> entry : seenRules
+				.ruleTable().cellSet()) {
 			// Cache out all the rules in advance.
 			getRules(entry.getRowKey(), entry.getColumnKey());
 		}
@@ -91,7 +128,8 @@ public abstract class AbstractParser implements Parser {
 		private final Logic semantics;
 		private final int id;
 
-		private UnaryRule(final int id, final Category result, final DependencyStructure dependencyStructure,
+		private UnaryRule(final int id, final Category result,
+				final DependencyStructure dependencyStructure,
 				final Logic semantics) {
 			this.result = result;
 			this.dependencyStructureTransformation = dependencyStructure;
@@ -99,8 +137,10 @@ public abstract class AbstractParser implements Parser {
 			this.semantics = semantics;
 		}
 
-		public UnaryRule(final int id, final String from, final String to, final Logic semantics) {
-			this(id, Category.valueOf(to), DependencyStructure.makeUnaryRuleTransformation(from, to), semantics);
+		public UnaryRule(final int id, final String from, final String to,
+				final Logic semantics) {
+			this(id, Category.valueOf(to), DependencyStructure
+					.makeUnaryRuleTransformation(from, to), semantics);
 		}
 
 		public int getID() {
@@ -130,9 +170,14 @@ public abstract class AbstractParser implements Parser {
 
 	/**
 	 * Loads file containing unary rules
+	 * @param extraUnaryRules 
 	 */
-	public static ListMultimap<Category, UnaryRule> loadUnaryRules(final File file) throws IOException {
+	public static ListMultimap<Category, UnaryRule> loadUnaryRules(
+			final File file, Multimap<Category, UnaryRule> extraUnaryRules) throws IOException {
 		final Multimap<Category, UnaryRule> result = HashMultimap.create();
+		if (extraUnaryRules != null) {
+			result.putAll(extraUnaryRules);
+		}
 		final Lexicon lexicon = new DefaultLexicon();
 		for (String line : Util.readFile(file)) {
 			// Allow comments.
@@ -146,19 +191,24 @@ public abstract class AbstractParser implements Parser {
 
 			final String[] fields = line.split("\\s+");
 			if (fields.length != 2 && fields.length != 3) {
-				throw new Error("Expected 2 categories (and optional logical form) on line in UnaryRule file: " + line);
+				throw new Error(
+						"Expected 2 categories (and optional logical form) on line in UnaryRule file: "
+								+ line);
 			}
 
 			final String from = fields[0];
 			final String to = fields[1];
-			final Category cat = Category.make(Category.valueOf(to), Slash.FWD, Category.valueOf(from));
+			final Category cat = Category.make(Category.valueOf(to), Slash.FWD,
+					Category.valueOf(from));
 			Logic logic;
 			if (fields.length == 3) {
 				logic = LogicParser.fromString(fields[2], cat);
 			} else {
-				logic = lexicon.getEntry(null, "NULL", cat, Coindexation.fromString(to + "/" + from, -1));
+				logic = lexicon.getEntry(null, "NULL", cat,
+						Coindexation.fromString(to + "/" + from, -1));
 			}
-			result.put(Category.valueOf(from), new UnaryRule(result.size(), from, to, logic));
+			result.put(Category.valueOf(from), new UnaryRule(result.size(),
+					from, to, logic));
 		}
 
 		return ImmutableListMultimap.copyOf(result);
@@ -166,7 +216,7 @@ public abstract class AbstractParser implements Parser {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see uk.ac.ed.easyccg.syntax.ParserInterface#parseTokens(java.util.List)
 	 */
 	@Override
@@ -189,8 +239,10 @@ public abstract class AbstractParser implements Parser {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see uk.ac.ed.easyccg.syntax.ParserInterface#doParsing(uk.ac.ed.easyccg.syntax .InputReader.InputToParser)
+	 * 
+	 * @see
+	 * uk.ac.ed.easyccg.syntax.ParserInterface#doParsing(uk.ac.ed.easyccg.syntax
+	 * .InputReader.InputToParser)
 	 */
 	@Override
 	public List<Scored<SyntaxTreeNode>> doParsing(final InputToParser input) {
@@ -214,7 +266,8 @@ public abstract class AbstractParser implements Parser {
 	/**
 	 * Returns the set of binary rule productions between these two categories.
 	 */
-	protected List<RuleProduction> getRules(final Category left, final Category right) {
+	protected List<RuleProduction> getRules(final Category left,
+			final Category right) {
 		Map<Category, List<RuleProduction>> rightToRules = ruleCache.get(left);
 		if (rightToRules == null) {
 			rightToRules = new IdentityHashMap<>();
@@ -239,4 +292,10 @@ public abstract class AbstractParser implements Parser {
 	public Multimap<Category, UnaryRule> getUnaryRules() {
 		return unaryRules;
 	}
+	
+	@Override
+	public Collection<Combinator> getCombinators() {
+		return this.binaryRules;
+	}
+	
 }

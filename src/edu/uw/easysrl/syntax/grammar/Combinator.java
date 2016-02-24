@@ -31,7 +31,7 @@ public abstract class Combinator {
 		FA(RuleClass.OTHER), BA(RuleClass.OTHER), FC(RuleClass.FC), BX(RuleClass.BX), GFC(RuleClass.GFC), GBX(
 				RuleClass.GBX), CONJ(RuleClass.CONJ), RP(RuleClass.RP), LP(RuleClass.LP), NOISE(RuleClass.OTHER), FORWARD_TYPERAISE(
 						RuleClass.FORWARD_TYPERAISE), BACKWARD_TYPE_RAISE(RuleClass.BACKWARD_TYPE_RAISE), TYPE_CHANGE(
-								RuleClass.OTHER), LEXICON(RuleClass.LEXICON);
+								RuleClass.OTHER), LEXICON(RuleClass.LEXICON), QDISJ(RuleClass.CONJ);
 		private final RuleClass ruleClass;
 
 		RuleType(final RuleClass ruleClass) {

@@ -273,6 +273,8 @@ public class Coindexation implements Serializable {
 
 	static Coindexation fromString(String category, final Coindexation.IDorHead defaultHead,
 			final Map<Integer, Integer> usedIDs, final int headWord, final boolean isOnSpine) {
+		
+		category = category.replace("[p]", "").replace("[o]", "");
 
 		if (category.endsWith("}") && !category.endsWith("{_*}")) {
 			final int openIndex = category.lastIndexOf("{");

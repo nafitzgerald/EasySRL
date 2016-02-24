@@ -1,11 +1,13 @@
 package edu.uw.easysrl.syntax.parser;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.Multimap;
 
 import edu.uw.easysrl.main.InputReader.InputToParser;
 import edu.uw.easysrl.syntax.grammar.Category;
+import edu.uw.easysrl.syntax.grammar.Combinator;
 import edu.uw.easysrl.syntax.grammar.SyntaxTreeNode;
 import edu.uw.easysrl.syntax.parser.AbstractParser.UnaryRule;
 import edu.uw.easysrl.util.Util.Scored;
@@ -22,4 +24,6 @@ public interface Parser {
 	public abstract int getMaxSentenceLength();
 
 	public abstract Multimap<Category, UnaryRule> getUnaryRules();
+
+	public abstract Collection<Combinator> getCombinators();
 }

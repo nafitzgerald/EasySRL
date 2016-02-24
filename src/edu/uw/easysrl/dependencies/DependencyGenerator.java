@@ -28,14 +28,16 @@ import edu.uw.easysrl.syntax.parser.AbstractParser.UnaryRule;
  */
 public class DependencyGenerator {
 	private final Multimap<Category, UnaryRule> unaryRules;
+	private Collection<Combinator> binaryRules;
 
 	public DependencyGenerator(final File modelFolder) throws IOException {
-		this(AbstractParser.loadUnaryRules(new File(modelFolder, "unaryRules")));
+		this(AbstractParser.loadUnaryRules(new File(modelFolder, "unaryRules"), null), Combinator.STANDARD_COMBINATORS);
 		Coindexation.parseMarkedUpFile(new File(modelFolder, "markedup"));
 	}
 
-	public DependencyGenerator(final Multimap<Category, UnaryRule> unaryRules) throws IOException {
+	public DependencyGenerator(final Multimap<Category, UnaryRule> unaryRules, final Collection<Combinator> binaryRules) throws IOException {
 		this.unaryRules = unaryRules;
+		this.binaryRules = binaryRules;
 	}
 
 	public SyntaxTreeNode generateDependencies(final SyntaxTreeNode raw, final Collection<UnlabelledDependency> deps) {
@@ -95,7 +97,7 @@ public class DependencyGenerator {
 			node.getChild(1).accept(this);
 			final SyntaxTreeNode right = stack.pop();
 			final Collection<RuleProduction> rules = Combinator.getRules(left.getCategory(), right.getCategory(),
-					Combinator.STANDARD_COMBINATORS);
+					binaryRules);
 			for (final RuleProduction rule : rules) {
 				if (rule.getCategory().equals(node.getCategory())) {
 					final List<UnlabelledDependency> resolvedDeps = new ArrayList<>();

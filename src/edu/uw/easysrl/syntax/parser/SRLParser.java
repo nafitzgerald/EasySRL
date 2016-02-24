@@ -179,7 +179,7 @@ public abstract class SRLParser {
 				throws IOException {
 			super(parser, tagger);
 
-			this.dependencyGenerator = new DependencyGenerator(parser.getUnaryRules());
+			this.dependencyGenerator = new DependencyGenerator(parser.getUnaryRules(), parser.getCombinators());
 			this.classifier = classifier;
 		}
 

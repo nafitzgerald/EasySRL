@@ -6,9 +6,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.collect.HashMultimap;
@@ -97,6 +100,7 @@ public abstract class AbstractParser implements Parser {
 			combinators.addAll(extraCombinators);
 		}
 		this.binaryRules = ImmutableList.copyOf(combinators);
+		System.out.println(binaryRules.size());
 
 		possibleRootCategories = ImmutableSet.copyOf(validRootCategories);
 
@@ -268,6 +272,7 @@ public abstract class AbstractParser implements Parser {
 	 */
 	protected List<RuleProduction> getRules(final Category left,
 			final Category right) {
+
 		Map<Category, List<RuleProduction>> rightToRules = ruleCache.get(left);
 		if (rightToRules == null) {
 			rightToRules = new IdentityHashMap<>();
